@@ -3,6 +3,10 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CleanWebpackPlugin= require('clean-webpack-plugin')
 const webpack = require('webpack')
 const uglify = require('uglifyjs-webpack-plugin')
+const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin')
+// const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+const PurifyCssWebpackPlugin = require('purifycss-webpack')
+const glob = require('glob')
 module.exports = {
   // 入口
   // entry: ['./src/index.js', './src/index2.js'],
@@ -24,11 +28,39 @@ module.exports = {
       {
         test: /\.css$/,
         // use : ['style-loader', 'css-loader']
-        use: [
-          {loader: 'style-loader'},
-          {loader: 'css-loader'},
-        ],
+        // use: [
+        //   {loader: 'style-loader'},
+        //   {loader: 'css-loader'},
+        //   {loader: 'postcss-loader'},
+        // ],
         // loader : ['style-loader', 'css-loader']
+        use: ExtractTextWebpackPlugin.extract({
+          fallback: 'style-loader',
+          use:['css-loader','postcss-loader'],
+          publicPath: '../' // 背景图路径
+        })
+        // use: [
+        //   MiniCssExtractPlugin.loader,
+        //   "css-loader"
+        // ]
+      },
+      {
+        test: /\.(png|jpg|gif|svg)/,
+        use: [{
+          loader: 'url-loader',
+          options: {
+            limit: 10000,
+            outputPath: 'images' //图片打包出去的目录
+          }
+        }]
+      },
+      {
+        test: /\.less$/,
+        // use: ['style-loader', 'css-loader', 'less-loader']
+        use: ExtractTextWebpackPlugin.extract({
+          fallback: 'style-loader',
+          use: ['css-loader', 'less-loader'],
+        })
       }
     ]
   },
@@ -64,7 +96,14 @@ module.exports = {
     //   chunks: ['index2']
     // }),
     new webpack.HotModuleReplacementPlugin(),
-    new uglify()
+    new uglify(),
+    new ExtractTextWebpackPlugin('css/index.css'),
+    // new MiniCssExtractPlugin({
+    //   filename: "css/index.css"
+    // })
+    new PurifyCssWebpackPlugin({
+      paths:glob.sync(path.join(__dirname, 'src/*.html'))
+    })
   ],
   // 开发服务器
   devServer: {

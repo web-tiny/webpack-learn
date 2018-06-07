@@ -156,4 +156,66 @@ eg：
       a):npm i uglifyjs-webpack-plugin -D
       b):const uglify = require('uglifyjs-webpack-plugin')
       c):new uglify()
-> * images处理：
+> * images处理(jpg/png/jpeg/gif)：
+  1):loader: url-loader,file-loader
+  2):配置：
+      {
+        test: /\.(png|jpg|gif|svg)/,
+        use: [{
+          loader: 'url-loader',
+          options: {
+            limit: 10000,
+            outputPath: 'images' //图片打包出去的目录
+          }
+        }]
+      }
+> * 分离css打包的文件
+   1): plugin: extract-text-webpack-plugin/mini-css-extract-plugin
+   2): npm i extract-text-webpack-plugin@next -D
+   3): 配置: new ExtractTextWebpackPlugin('css/index.css(提取出去的路径)')
+      {
+        test: /\.css$/,
+        use: ExtractTextWebpackPlugin.extract({
+          fallback: 'style-loader',
+          use:'css-loader',
+          publicPath: '../' // 背景图路径
+        })
+      }
+> * less/sass处理
+  1): npm i less less-loader  -D/node-sass,sass-loader
+  2): 配置：
+      {
+        test: /\.less$/,
+        // use: ['style-loader', 'css-loader', 'less-loader']
+        // 提取less
+        use: ExtractTextWebpackPlugin.extract({
+          fallback: 'style-loader',
+          use: ['css-loader', 'less-loader'],
+        })
+      }
+> * transform(自动处理前缀)
+  1): postCss
+  2): npm i postcss-loader autoprefixer -D
+  3): postcss.config.js
+    postcss.config.js配置：
+      module.exports = {
+        plugins: [
+          require('autoprefixer')
+        ]
+      }
+    对应的webpack.config.js配置
+      use: ExtractTextWebpackPlugin.extract({
+        fallback: 'style-loader',
+        use:['css-loader','postcss-loader'],
+        publicPath: '../' // 背景图路径
+      })
+> * 消除冗余的CSS代码;
+  1): Purifycss
+  2): npm i purifycss-webpack purify-css -D
+  3): 引入插件：const PurifyCssWebpackPlugin = require('purifycss-webpack')
+  4): 需要引入一个额外的包
+    glob （npm i glob -D）
+    配置
+    new PurifyCssWebpackPlugin({
+      paths:glob.sync(path.join(__dirname, 'src/*.html'))
+    })

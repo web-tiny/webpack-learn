@@ -1,0 +1,18 @@
+#root{
+  font-size: 28px;
+  font-family: 'Courier New', Courier, monospace;
+  background-image: url('../images/car.svg');
+  background-repeat: no-repeat
+}
+#less{
+  transform: rotate(45deg)
+}
+#less{
+  width: 100px;
+}
+.b{
+  height: 10px;
+}
+.width{
+  width: 100px;
+}
