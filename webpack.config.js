@@ -5,7 +5,7 @@ const webpack = require('webpack')
 const uglify = require('uglifyjs-webpack-plugin')
 const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin')
 // const MiniCssExtractPlugin = require("mini-css-extract-plugin")
-const PurifyCssWebpackPlugin = require('purifycss-webpack')
+const PurifyCssPlugin = require('purifycss-webpack')
 const glob = require('glob')
 module.exports = {
   // 入口
@@ -101,7 +101,7 @@ module.exports = {
     // new MiniCssExtractPlugin({
     //   filename: "css/index.css"
     // })
-    new PurifyCssWebpackPlugin({
+    new PurifyCssPlugin({
       paths:glob.sync(path.join(__dirname, 'src/*.html'))
     })
   ],

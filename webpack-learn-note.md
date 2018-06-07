@@ -134,6 +134,7 @@ eg：
     },
   ```
 > * loaders(转化器，加载器，如：less/sass->css,ES7/8):
+```javascript
  处理css文件：
     style-loader
     css-loader
@@ -145,7 +146,9 @@ eg：
             {loader: 'style-loader'},
             {loader: 'css-loader'},
           ]
+  ```
 > * 打包后压缩上线：
+```javascript
   1）：webpack4.X以后
     直接在package.json的build里加 --mode production即可
     "script":{
@@ -156,7 +159,9 @@ eg：
       a):npm i uglifyjs-webpack-plugin -D
       b):const uglify = require('uglifyjs-webpack-plugin')
       c):new uglify()
+  ```
 > * images处理(jpg/png/jpeg/gif)：
+```javascript
   1):loader: url-loader,file-loader
   2):配置：
       {
@@ -169,7 +174,9 @@ eg：
           }
         }]
       }
+  ```
 > * 分离css打包的文件
+```javascript
    1): plugin: extract-text-webpack-plugin/mini-css-extract-plugin
    2): npm i extract-text-webpack-plugin@next -D
    3): 配置: new ExtractTextWebpackPlugin('css/index.css(提取出去的路径)')
@@ -181,7 +188,9 @@ eg：
           publicPath: '../' // 背景图路径
         })
       }
+```
 > * less/sass处理
+```javascript
   1): npm i less less-loader  -D/node-sass,sass-loader
   2): 配置：
       {
@@ -193,7 +202,9 @@ eg：
           use: ['css-loader', 'less-loader'],
         })
       }
+```
 > * transform(自动处理前缀)
+```javascript
   1): postCss
   2): npm i postcss-loader autoprefixer -D
   3): postcss.config.js
@@ -209,13 +220,18 @@ eg：
         use:['css-loader','postcss-loader'],
         publicPath: '../' // 背景图路径
       })
-> * 消除冗余的CSS代码;
-  1): Purifycss
+```
+> * 消除冗余的没用到的CSS代码;
+```javascript
+  1): purifycss
   2): npm i purifycss-webpack purify-css -D
-  3): 引入插件：const PurifyCssWebpackPlugin = require('purifycss-webpack')
+  3): 引入插件：const PurifyCssPlugin = require('purifycss-webpack')
   4): 需要引入一个额外的包
-    glob （npm i glob -D）
+    glob（一个扫描文件的plugin）
+    |-npm i glob -D
     配置
-    new PurifyCssWebpackPlugin({
+    const glob = require('glob')
+    new PurifyCssPlugin({
       paths:glob.sync(path.join(__dirname, 'src/*.html'))
     })
+```
