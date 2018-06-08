@@ -7,20 +7,21 @@ const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin')
 // const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const PurifyCssPlugin = require('purifycss-webpack')
 const glob = require('glob')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 module.exports = {
   // 入口
   // entry: ['./src/index.js', './src/index2.js'],
   // 多入口
-  // entry: {
-  //   index: './src/index.js',
-  //   index2: './src/index2.js'
-  // },
-  entry: ['./src/index.js'],
+  entry: {
+    index: './src/index.js',
+    jquery: 'jquery'
+  },
+  // entry: ['./src/index.js'],
   // 出口
   output: {
     path: path.resolve(__dirname,'dist'),
     // filename: 'bundle.js'
-    filename: '[name].bundle.js'
+    filename: 'bundle.js'
   },
   // module
   module: {
@@ -61,12 +62,17 @@ module.exports = {
           fallback: 'style-loader',
           use: ['css-loader', 'less-loader'],
         })
+      },
+      {
+        test: /\.(js|jsx)$/,
+        use: ['babel-loader'],
+        exclude: /node_modules/
       }
     ]
   },
   // plugins
   plugins: [
-    // 大抱歉自动删除dist目录的内容
+    // 打包前自动删除dist目录的内容
     new CleanWebpackPlugin(['dist']),
     new HtmlWebpackPlugin({
       title: 'webpack how are you ',
@@ -103,8 +109,26 @@ module.exports = {
     // })
     new PurifyCssPlugin({
       paths:glob.sync(path.join(__dirname, 'src/*.html'))
-    })
+    }),
+    new CopyWebpackPlugin([{
+      from: path.resolve(__dirname, 'src/assets'),
+      to: '../public'
+    }]),
+    new webpack.ProvidePlugin({
+      $: 'jquery'
+    }),
   ],
+  optimization:{
+    splitChunks: {
+      cacheGroups:{
+        vendor: {
+          chunks: 'initial',
+          name: 'jquery',
+          enforce: true
+        }
+      }
+    }
+  },
   // 开发服务器
   devServer: {
     // 设置服务器访问的基本目录

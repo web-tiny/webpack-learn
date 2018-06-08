@@ -235,3 +235,70 @@ eg：
       paths:glob.sync(path.join(__dirname, 'src/*.html'))
     })
 ```
+> * 调试
+```javascript
+    1): wabpack4.X以上开启调试：--mode development
+    2): webpack3.X以前：
+      在package.json里加上如下配置：devtool:source-map(暴露源码)
+  ```
+> * babel
+ ```javascript
+    1): 作用：编译js/轻松使用ESnext转化/jsx
+    2): babel-core/babel-loader/babel-preset-env
+    3): npm i babel-core babel-loader babel-preset-env -D
+    4): 配置：
+      在.babelrc文件里
+      {
+        "presets": [
+          "env"
+        ]
+      }
+  ```
+> * jsx(react环境搭建)
+```javascript
+    1): npm i babel-preset-react -D
+    2): 在.babelrc文件里配置
+      {
+        "presets": [
+          "env","react"
+        ]
+      }
+    3): npm i react react-dom -D
+  ```
+> * 静态资源输出
+```javascript
+  1): copy-webpack-plugin
+  2): npm i copy-webpack-plugin -D
+  3): 引人/配置
+    const CopyWebpackPlugin = require('copy-webpack-plugin')
+    new CopyWebpackPlugin([{
+      from: path.resolve(__dirname, 'src/assets'),
+      to: '../public'
+    }])
+  ```
+> * 第三方库的使用
+```javascript
+  1): npm i jquery -S
+  2): import $ from 'jquery'
+  3): 全局使用：webpack提供了一个ProvidePlugin方法
+      const webpack = require('webpack')
+      在plugin里：
+        new webpack.ProvidePlugin({
+          $:'jquery'
+        })
+  4): 使用import和ProviderPlugin的区别：
+    import方式引入的时候，无论在代码中是否使用jquery，打包后都会打包进去，会产生大量冗余的js代码，而ProvidePlugin只有在使用到的时候才会打包
+  5): 提取第三方js库
+    配置：
+      optimization:{
+        splitChunks: {
+          cacheGroups:{
+            vendor: {
+              chunks: 'initial',
+              name: 'jquery',
+              enforce: true
+            }
+          }
+        }
+      }
+  ```
