@@ -1,6 +1,6 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const CleanWebpackPlugin= require('clean-webpack-plugin')
+const { CleanWebpackPlugin }= require('clean-webpack-plugin')
 const webpack = require('webpack')
 const uglify = require('uglifyjs-webpack-plugin')
 const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin')
@@ -8,20 +8,24 @@ const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin')
 const PurifyCssPlugin = require('purifycss-webpack')
 const glob = require('glob')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+
+// process.traceDeprecation = true
+
 module.exports = {
   // 入口
   // entry: ['./src/index.js', './src/index2.js'],
   // 多入口
   entry: {
     index: './src/index.js',
-    jquery: 'jquery'
+    index2: './src/index2.js'
   },
   // entry: ['./src/index.js'],
   // 出口
   output: {
     path: path.resolve(__dirname,'dist'),
     // filename: 'bundle.js'
-    filename: 'bundle.js'
+    filename: '[name].bundle.js',
+    chunkFilename: "[name].chunk.js"
   },
   // module
   module: {
@@ -65,15 +69,19 @@ module.exports = {
       },
       {
         test: /\.(js|jsx)$/,
-        use: ['babel-loader'],
-        exclude: /node_modules/
+        exclude: /(node_modules)/,
+        use: {
+          loader: 'babel-loader'
+        },
       }
     ]
   },
   // plugins
   plugins: [
     // 打包前自动删除dist目录的内容
-    new CleanWebpackPlugin(['dist']),
+    new CleanWebpackPlugin({
+      cleanOnceBeforeBuildPatterns: ['./dist']
+    }),
     new HtmlWebpackPlugin({
       title: 'webpack how are you ',
       template: './src/index.html',
@@ -122,9 +130,17 @@ module.exports = {
     splitChunks: {
       cacheGroups:{
         vendor: {
-          chunks: 'initial',
-          name: 'jquery',
-          enforce: true
+          chunks: 'all',
+          name: 'vendor',
+          enforce: true,
+          priority: 10,
+          test: /[\\/]node_modules[\\/]/
+        },
+        common: {
+          name: 'common',
+          chunks: 'all',
+          minSize: 1,
+          priority: 0
         }
       }
     }

@@ -302,3 +302,7 @@ eg：
         }
       }
   ```
+## 检查更新package.json里的插件
+npm i -g npm-check-updates
+ncu -u
+npm install
